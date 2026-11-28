@@ -34112,7 +34112,7 @@ function BeeSwarmSimulator(DATA){
     backgroundMusic.volume=1
     const backgroundMusicContext=new (window.AudioContext||window.webkitAudioContext)()
     const backgroundMusicGain=backgroundMusicContext.createGain()
-    backgroundMusicGain.gain.value=2
+    backgroundMusicGain.gain.value=4
     backgroundMusicContext.createMediaElementSource(backgroundMusic).connect(backgroundMusicGain)
     backgroundMusicGain.connect(backgroundMusicContext.destination)
 
