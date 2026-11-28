@@ -25532,7 +25532,8 @@ function BeeSwarmSimulator(DATA){
         
         out.viewMatrix=new Float32Array(16)
         out.modelMatrix=new Float32Array(16)
-        let maxStepHeight=0.5,stepUpOccurred=false
+        let maxStepHeight=0.5
+        out.stepUpOccurred=false
         
         out.body=new CANNON.Body({
             
@@ -25555,7 +25556,7 @@ function BeeSwarmSimulator(DATA){
                     out.body.position.y+=stepHeight+0.01
                     out.body.velocity.y=0
                     out.grounded=true
-                    stepUpOccurred=true
+                    out.stepUpOccurred=true
                 }
             }
 
@@ -34378,10 +34379,10 @@ function BeeSwarmSimulator(DATA){
         player.updatePhysics()
         let velocityX=player.body.velocity.x,velocityZ=player.body.velocity.z
         world.step(dt)
-        if(stepUpOccurred){
+        if(player.stepUpOccurred){
             player.body.velocity.x=velocityX
             player.body.velocity.z=velocityZ
-            stepUpOccurred=false
+            player.stepUpOccurred=false
         }
         player.updateCamera()
         
