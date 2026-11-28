@@ -20023,7 +20023,7 @@ function BeeSwarmSimulator(DATA){
         STORM_SKY_COLOR=0
 
         if(isBeesmas){
-            ef=CURRENTLY_SNOW_STORM?(STORM_SKY_COLOR=[.96,.96,.96],'10.+2.*'):''
+            ef=CURRENTLY_SNOW_STORM?(STORM_SKY_COLOR=[.96,.96,.96],'10.+2.*'):'20.+0.6*'
         }else{
             ef='20.+0.6*'
         }

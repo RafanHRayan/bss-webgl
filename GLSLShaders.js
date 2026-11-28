@@ -146,7 +146,7 @@ window.glsl_static_geometry_fsh = `#version 300 es
         float specInst=0.4*isNight;
 
         BEESMAS{
-        fragColor=vec4(mix((mix(mix(pixColor.rgb,t.rgb,t.a),pixColor.rgb,pixUV.z)+specular*specInst)*shadow,FOGCOLB,smoothstep(-30.0,130.0,EXTRAFOGpixFog))*isNight,pixColor.w);
+        fragColor=vec4(mix((mix(mix(pixColor.rgb,t.rgb,t.a),pixColor.rgb,pixUV.z)+specular*specInst)*shadow,FOGCOLB,smoothstep(20.0,120.0,EXTRAFOGpixFog))*isNight,pixColor.w);
         }ELSE{
         fragColor=vec4(mix((mix(mix(pixColor.rgb,t.rgb,t.a),pixColor.rgb,pixUV.z)+specular*specInst)*shadow,FOGCOL,smoothstep(20.0,120.0,EXTRAFOGpixFog))*isNight,pixColor.w);
         }
@@ -292,7 +292,7 @@ window.glsl_flower_geometry_vsh = `#version 300 es
         pixUV=vertUV;
         goo=vertGoo;
         BEESMAS{
-            pixFog=smoothstep(-30.0,130.0,EXTRAFOGpos.z);
+            pixFog=smoothstep(20.0,120.0,EXTRAFOGpos.z);
         }ELSE{
             pixFog=smoothstep(20.0,120.0,EXTRAFOGpos.z);
         }
@@ -405,7 +405,7 @@ window.glsl_bee_geometry_vsh = `#version 300 es
         vec4 pos=viewMatrix*vec4(vp+u*quaternion.w+uu*2.0+instance_pos.xyz,1);
 
         BEESMAS{
-            pixFog=smoothstep(-30.0,130.0,EXTRAFOGpos.z);
+            pixFog=smoothstep(20.0,120.0,EXTRAFOGpos.z);
         }ELSE{
             pixFog=smoothstep(20.0,120.0,EXTRAFOGpos.z);
         }
@@ -640,7 +640,7 @@ window.glsl_text_renderer_vsh = `#version 300 es
 
         pixColor=instance_color;
         BEESMAS{
-            fogAmount=smoothstep(-30.0,130.0,EXTRAFOGoriginPos.z);
+            fogAmount=smoothstep(20.0,120.0,EXTRAFOGoriginPos.z);
         }ELSE{
             fogAmount=smoothstep(20.0,120.0,EXTRAFOGoriginPos.z);
         }
