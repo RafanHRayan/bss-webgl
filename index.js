@@ -34105,6 +34105,54 @@ function BeeSwarmSimulator(DATA){
     gl.clearColor(1,0,1,1)
     gl.useProgram(visualProgram)
 
+    let backgroundMusicTrack=null,backgroundMusicUnlocked=false
+    const backgroundMusic=new Audio()
+    backgroundMusic.loop=true
+
+    function updateBackgroundMusic(){
+
+        let pos=player.body.position,
+            in30BeeZone=pos.x>=-90&&pos.x<=30&&pos.y>=44&&pos.y<=84&&pos.z>=90.5&&pos.z<=115.5,
+            nextTrack=pos.z>=43.26&&!in30BeeZone?'Bpatrol':isBeesmas?'Drone':'Wax'
+
+        if(nextTrack!==backgroundMusicTrack){
+
+            backgroundMusicTrack=nextTrack
+            backgroundMusic.pause()
+            backgroundMusic.src='audio/music/'+nextTrack+'.ogg'
+            backgroundMusic.load()
+        }
+
+        if(backgroundMusicUnlocked&&backgroundMusic.paused){
+
+            let playPromise=backgroundMusic.play()
+
+            if(playPromise){
+
+                playPromise.catch(function(error){
+
+                    if(error.name==='NotAllowedError'){
+
+                        backgroundMusicUnlocked=false
+                        return
+                    }
+
+                    console.error('Unable to play background music:',error)
+                    backgroundMusicUnlocked=false
+                })
+            }
+        }
+    }
+
+    function unlockBackgroundMusic(){
+
+        backgroundMusicUnlocked=true
+        updateBackgroundMusic()
+    }
+
+    window.addEventListener('pointerdown',unlockBackgroundMusic)
+    window.addEventListener('keydown',unlockBackgroundMusic)
+
     
     gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0)
 
@@ -34120,6 +34168,7 @@ function BeeSwarmSimulator(DATA){
         BEE_COLLECT=Math.sin(TIME*15)*0.25
         BEE_FLY=Math.sin(TIME*35)*0.1
         STATS_TICK=frameCount%10===1
+        updateBackgroundMusic()
         
         if(STATS_TICK){
 
