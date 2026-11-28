@@ -34110,10 +34110,25 @@ function BeeSwarmSimulator(DATA){
     backgroundMusic.loop=true
     backgroundMusic.src='audio/music/'+(isBeesmas?'Drone':'Wax')+'.ogg'
     backgroundMusic.volume=1
+    const backgroundMusicContext=new (window.AudioContext||window.webkitAudioContext)()
+    const backgroundMusicGain=backgroundMusicContext.createGain()
+    backgroundMusicGain.gain.value=2
+    backgroundMusicContext.createMediaElementSource(backgroundMusic).connect(backgroundMusicGain)
+    backgroundMusicGain.connect(backgroundMusicContext.destination)
 
     function playBackgroundMusic(){
 
         if(backgroundMusicUnlocked&&!document.hidden&&backgroundMusic.paused){
+
+            let resumePromise=backgroundMusicContext.resume()
+
+            if(resumePromise){
+
+                resumePromise.catch(function(error){
+
+                    console.error('Unable to resume background music audio context:',error)
+                })
+            }
 
             let playPromise=backgroundMusic.play()
 
