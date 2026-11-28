@@ -25532,6 +25532,7 @@ function BeeSwarmSimulator(DATA){
         
         out.viewMatrix=new Float32Array(16)
         out.modelMatrix=new Float32Array(16)
+        let maxStepHeight=0.5
         
         out.body=new CANNON.Body({
             
@@ -25545,7 +25546,17 @@ function BeeSwarmSimulator(DATA){
         
         out.body.addEventListener('collide',function(e){
             
-            if(Math.abs(e.contact.ni.y)>0.5) out.grounded=true
+            if(Math.abs(e.contact.ni.y)>0.5){
+                out.grounded=true
+            }else if(out.grounded&&e.body.collisionFilterGroup===STATIC_PHYSICS_GROUP&&e.body.shapes[0] instanceof CANNON.Box){
+                e.body.computeAABB()
+                let stepHeight=e.body.aabb.upperBound.y-(out.body.position.y-0.5)
+                if(stepHeight>0.01&&stepHeight<=maxStepHeight){
+                    out.body.position.y+=stepHeight+0.01
+                    out.body.velocity.y=0
+                    out.grounded=true
+                }
+            }
 
             if(e.body.isBannedGate){
 
