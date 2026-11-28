@@ -34109,7 +34109,7 @@ function BeeSwarmSimulator(DATA){
     const backgroundMusic=new Audio()
     backgroundMusic.loop=true
     backgroundMusic.src='audio/music/'+(isBeesmas?'Drone':'Wax')+'.ogg'
-    backgroundMusic.volume=0.35
+    backgroundMusic.volume=0.5
 
     function playBackgroundMusic(){
 
