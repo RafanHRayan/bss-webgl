@@ -25532,7 +25532,7 @@ function BeeSwarmSimulator(DATA){
         
         out.viewMatrix=new Float32Array(16)
         out.modelMatrix=new Float32Array(16)
-        let maxStepHeight=0.5
+        let maxStepHeight=0.5,stepUpOccurred=false
         
         out.body=new CANNON.Body({
             
@@ -25555,6 +25555,7 @@ function BeeSwarmSimulator(DATA){
                     out.body.position.y+=stepHeight+0.01
                     out.body.velocity.y=0
                     out.grounded=true
+                    stepUpOccurred=true
                 }
             }
 
@@ -34375,7 +34376,13 @@ function BeeSwarmSimulator(DATA){
         gl.clear(16640)
         
         player.updatePhysics()
+        let velocityX=player.body.velocity.x,velocityZ=player.body.velocity.z
         world.step(dt)
+        if(stepUpOccurred){
+            player.body.velocity.x=velocityX
+            player.body.velocity.z=velocityZ
+            stepUpOccurred=false
+        }
         player.updateCamera()
         
         gl.useProgram(dynamicGeometryProgram)
