@@ -34105,9 +34105,10 @@ function BeeSwarmSimulator(DATA){
     gl.clearColor(1,0,1,1)
     gl.useProgram(visualProgram)
 
-    let backgroundMusicTrack=null,backgroundMusicUnlocked=false
+    let backgroundMusicTrack=null,backgroundMusicPendingTrack=null,backgroundMusicFadeStart=0,backgroundMusicFadeStartVolume=0,backgroundMusicUnlocked=false
     const backgroundMusic=new Audio()
     backgroundMusic.loop=true
+    const BACKGROUND_MUSIC_VOLUME=0.35,BACKGROUND_MUSIC_FADE_DURATION=1500
 
     function updateBackgroundMusic(){
 
@@ -34115,15 +34116,40 @@ function BeeSwarmSimulator(DATA){
             in30BeeZone=pos.x>=-90&&pos.x<=30&&pos.y>=44&&pos.y<=84&&pos.z>=90.5&&pos.z<=115.5,
             nextTrack=pos.z>=43.26&&!in30BeeZone?'Bpatrol':isBeesmas?'Drone':'Wax'
 
-        if(nextTrack!==backgroundMusicTrack){
+        if(!backgroundMusicTrack){
 
             backgroundMusicTrack=nextTrack
-            backgroundMusic.pause()
             backgroundMusic.src='audio/music/'+nextTrack+'.ogg'
             backgroundMusic.load()
+            backgroundMusic.volume=BACKGROUND_MUSIC_VOLUME
+        }else if(nextTrack===backgroundMusicTrack&&backgroundMusicPendingTrack){
+
+            backgroundMusicPendingTrack=null
+            backgroundMusic.volume=BACKGROUND_MUSIC_VOLUME
+        }else if(nextTrack!==backgroundMusicTrack&&nextTrack!==backgroundMusicPendingTrack){
+
+            backgroundMusicPendingTrack=nextTrack
+            backgroundMusicFadeStart=performance.now()
+            backgroundMusicFadeStartVolume=backgroundMusic.volume
         }
 
-        if(backgroundMusicUnlocked&&backgroundMusic.paused){
+        if(backgroundMusicPendingTrack){
+
+            let fadeProgress=Math.min((performance.now()-backgroundMusicFadeStart)/BACKGROUND_MUSIC_FADE_DURATION,1)
+            backgroundMusic.volume=backgroundMusicFadeStartVolume*(1-fadeProgress)
+
+            if(fadeProgress>=1){
+
+                backgroundMusicTrack=backgroundMusicPendingTrack
+                backgroundMusicPendingTrack=null
+                backgroundMusic.pause()
+                backgroundMusic.src='audio/music/'+backgroundMusicTrack+'.ogg'
+                backgroundMusic.load()
+                backgroundMusic.volume=BACKGROUND_MUSIC_VOLUME
+            }
+        }
+
+        if(backgroundMusicUnlocked&&!document.hidden&&!backgroundMusicPendingTrack&&backgroundMusic.paused){
 
             let playPromise=backgroundMusic.play()
 
@@ -34152,6 +34178,16 @@ function BeeSwarmSimulator(DATA){
 
     window.addEventListener('pointerdown',unlockBackgroundMusic)
     window.addEventListener('keydown',unlockBackgroundMusic)
+    document.addEventListener('visibilitychange',function(){
+
+        if(document.hidden){
+
+            backgroundMusic.pause()
+        }else{
+
+            updateBackgroundMusic()
+        }
+    })
 
     
     gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0)
