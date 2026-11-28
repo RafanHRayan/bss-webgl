@@ -25694,9 +25694,13 @@ function BeeSwarmSimulator(DATA){
                                 isCompleted=false
                             }
 
-                            let c=MATH.doStatGrammar(out.quests[i].req[j][0])+' '+MATH.addCommas(out.quests[i].req[j][1].toString())+' '+(out.quests[i].req[j][1]>1&&MATH.doStatGrammar(out.quests[i].req[j][0])==='Defeat'?MATH.doPlural(MATH.doGrammar(out.quests[i].req[j][0])):MATH.doGrammar(out.quests[i].req[j][0]))+'<br>('+(MATH.constrain((out.stats[out.quests[i].req[j][0]]-out.quests[i].req[j][2])/out.quests[i].req[j][1],0,1)*100).toFixed(0)
+                            let req=out.quests[i].req[j],
+                                amountDone=MATH.constrain(out.stats[req[0]]-req[2],0,req[1]),
+                                isNectarTime=/^(hours|minutes)Of.*Nectar$/.test(req[0]),
+                                progressText=isNectarTime?MATH.doTime(amountDone*(req[0].indexOf('hoursOf')===0?3600:60)):MATH.addCommas(Math.floor(amountDone).toString()),
+                                c=MATH.doStatGrammar(req[0])+' '+MATH.addCommas(req[1].toString())+' '+(req[1]>1&&MATH.doStatGrammar(req[0])==='Defeat'?MATH.doPlural(MATH.doGrammar(req[0])):MATH.doGrammar(req[0]))+'<br>('+progressText
 
-                            s+="<div style='border-radius:3px;width:190px;margin-top:0px;margin-bottom:5px;background-color:"+(festiveColor?"rgb(255,80,80)":"rgb(255,0,0)")+";color:black;font-family:calibri;font-size:13px;margin-left:5px;position:relative;'><div style='position:absolute;left:0px;top:0px;border-radius:2px;right:"+(190-Math.min(((out.stats[out.quests[i].req[j][0]]-out.quests[i].req[j][2])/out.quests[i].req[j][1])*190,190))+"px;bottom:0px;background-color:rgb(0,250,0);'></div><div style='position:absolute;left:0px;top:0px;border-radius:2px;right:0px;bottom:0px'>"+c+"%)</div><u style='color:rgb(0,0,0,0)'>"+c+"</u></div>"
+                            s+="<div style='border-radius:3px;width:190px;margin-top:0px;margin-bottom:5px;background-color:"+(festiveColor?"rgb(255,80,80)":"rgb(255,0,0)")+";color:black;font-family:calibri;font-size:13px;margin-left:5px;position:relative;'><div style='position:absolute;left:0px;top:0px;border-radius:2px;right:"+(190-Math.min((amountDone/req[1])*190,190))+"px;bottom:0px;background-color:rgb(0,250,0);'></div><div style='position:absolute;left:0px;top:0px;border-radius:2px;right:0px;bottom:0px'>"+c+")</div><u style='color:rgb(0,0,0,0)'>"+c+"</u></div>"
                             
                         }
                         
